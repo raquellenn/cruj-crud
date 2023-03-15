@@ -17,8 +17,7 @@ export class UsersController {
 
   @Get()
   async getAll() {
-    const result = await this.userService.getAll();
-    return result[0];
+    return await this.userService.getAll();
   }
 
   @Get(':id')
@@ -41,6 +40,6 @@ export class UsersController {
 
   @Delete(':id')
   async delete(@Param('id') id: string) {
-    await this.userService.delete(id);
+    return await this.userService.delete(id);
   }
 }

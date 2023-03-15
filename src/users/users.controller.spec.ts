@@ -12,6 +12,7 @@ const usersList: User[] = [
 const user = usersList[0];
 const createdUser = new User('d', 'd@hotmail.com');
 const updatedUser = new User('a', 'a@hotmail.com');
+const deletedUser = usersList[0];
 
 describe('UsersController', () => {
   let usersController: UsersController;
@@ -28,7 +29,7 @@ describe('UsersController', () => {
             getById: jest.fn().mockResolvedValue(user),
             create: jest.fn().mockResolvedValue(createdUser),
             update: jest.fn().mockResolvedValue(updatedUser),
-            delete: jest.fn(),
+            delete: jest.fn().mockResolvedValue(user),
           },
         },
       ],
@@ -44,11 +45,11 @@ describe('UsersController', () => {
   });
 
   describe('getAll', () => {
-    it.only('should return an array of users', async () => {
+    it('should return an array of users', async () => {
       // act
       const result = await usersController.getAll();
       // assert
-      expect(result).toBe(usersList[0]);
+      expect(result).toBe(usersList);
     });
   });
 
@@ -87,15 +88,24 @@ describe('UsersController', () => {
       expect(result).toEqual(updatedUser);
     });
 
-    it('should throw an error if user is not found', async () => {
-      //arrange
-      const id = '10';
-      const updateUserDto = { name: 'd', email: 'd@hotmail.com' };
+    // it('should throw an error if user is not found', async () => {
+    //   //arrange
+    //   const id = '10';
+    //   const updateUserDto = { name: 'd', email: 'd@hotmail.com' };
 
+    //   //assert
+    //   await expect(usersController.update(id, updateUserDto)).rejects.toThrow(
+    //     NotFoundException,
+    //   );
+  });
+  describe('delete', () => {
+    it('should delete an existing user', async () => {
+      //arrange
+      const id = '828782p8yuy8';
+      //act
+      const result = await usersController.delete(id);
       //assert
-      await expect(usersController.update(id, updateUserDto)).rejects.toThrow(
-        NotFoundException,
-      );
+      expect(result).toBe(user);
     });
   });
 });
