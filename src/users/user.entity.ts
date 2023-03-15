@@ -1,11 +1,11 @@
-import { Document } from 'mongoose';
 
-export class User extends Document {
+
+export class User {
   name: string;
   email: string;
+  id: string;
 
-  constructor(name: string, email: string) {
-    super();
+  constructor(name, email) {
     this.name = name;
     this.email = email;
   }

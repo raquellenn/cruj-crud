@@ -6,8 +6,8 @@ import {
   Param,
   Post,
   Put,
+  ValidationPipe,
 } from '@nestjs/common';
-import { User } from './user.entity';
 import { UserService } from './user.service';
 import { UserDto } from './dtos/user.dto';
 
@@ -17,7 +17,8 @@ export class UsersController {
 
   @Get()
   async getAll() {
-    return await this.userService.getAll();
+    const result = await this.userService.getAll();
+    return result[0];
   }
 
   @Get(':id')
@@ -26,12 +27,15 @@ export class UsersController {
   }
 
   @Post()
-  async create(@Body() user: UserDto): Promise<UserDto> {
+  async create(@Body(new ValidationPipe()) user: UserDto): Promise<UserDto> {
     return await this.userService.create(user);
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() user: UserDto) {
+  async update(
+    @Param('id') id: string,
+    @Body(new ValidationPipe()) user: UserDto,
+  ) {
     return await this.userService.update(id, user);
   }
 
