@@ -7,6 +7,8 @@ import {
   Post,
   Put,
   ValidationPipe,
+  NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './dtos/user.dto';
@@ -22,12 +24,20 @@ export class UsersController {
 
   @Get(':id')
   async getById(@Param('id') id: string) {
-    return await this.userService.getById(id);
+    const foundById = await this.userService.getById(id);
+    if (!foundById) {
+      throw new NotFoundException('User Not Found');
+    }
+    return foundById;
   }
 
   @Post()
   async create(@Body(new ValidationPipe()) user: UserDto): Promise<UserDto> {
-    return await this.userService.create(user);
+    try {
+      return await this.userService.create(user);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Put(':id')
@@ -35,11 +45,19 @@ export class UsersController {
     @Param('id') id: string,
     @Body(new ValidationPipe()) user: UserDto,
   ) {
-    return await this.userService.update(id, user);
+    const updatedUser = await this.userService.update(id, user);
+    if (!updatedUser) {
+      throw new NotFoundException('User Not Found');
+    }
+    return updatedUser;
   }
 
   @Delete(':id')
   async delete(@Param('id') id: string) {
-    return await this.userService.delete(id);
+    const deletedUser = await this.userService.delete(id);
+    if (!deletedUser) {
+      throw new NotFoundException('User Not Found');
+    }
+    return deletedUser;
   }
 }

@@ -1,4 +1,4 @@
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { User } from './user.entity';
 import { UserService } from './user.service';
@@ -12,7 +12,6 @@ const usersList: User[] = [
 const user = usersList[0];
 const createdUser = new User('d', 'd@hotmail.com');
 const updatedUser = new User('a', 'a@hotmail.com');
-const deletedUser = usersList[0];
 
 describe('UsersController', () => {
   let usersController: UsersController;
@@ -62,6 +61,15 @@ describe('UsersController', () => {
       //assert
       expect(result).toEqual(user);
     });
+
+    it('should throw a error if a user is not found', async () => {
+      const id = '10';
+      jest.spyOn(userService, 'getById').mockResolvedValue(null);
+
+      await expect(usersController.getById(id)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
   });
 
   describe('create', () => {
@@ -72,6 +80,17 @@ describe('UsersController', () => {
       const result = await usersController.create(createUserDto);
       //assert
       expect(result).toEqual(createdUser);
+    });
+
+    it('should throw an error if user is invalid', async () => {
+      const invalidUser = { name: '82273', email: 'invalid_email' };
+      jest
+        .spyOn(userService, 'create')
+        .mockRejectedValueOnce(new BadRequestException('Invalid user'));
+
+      await expect(usersController.create(invalidUser)).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 
@@ -88,15 +107,17 @@ describe('UsersController', () => {
       expect(result).toEqual(updatedUser);
     });
 
-    // it('should throw an error if user is not found', async () => {
-    //   //arrange
-    //   const id = '10';
-    //   const updateUserDto = { name: 'd', email: 'd@hotmail.com' };
+    it('should throw an error if user is not found', async () => {
+      //arrange
+      const id = '10';
+      jest.spyOn(userService, 'update').mockResolvedValue(null);
+      const updateUser = { name: 'bli', email: 'suarez@hotmail.com' };
 
-    //   //assert
-    //   await expect(usersController.update(id, updateUserDto)).rejects.toThrow(
-    //     NotFoundException,
-    //   );
+      //assert
+      await expect(usersController.update(id, updateUser)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
   });
   describe('delete', () => {
     it('should delete an existing user', async () => {
@@ -106,6 +127,13 @@ describe('UsersController', () => {
       const result = await usersController.delete(id);
       //assert
       expect(result).toBe(user);
+    });
+    it('should throw a error if not found the user', async () => {
+      const id = '76826892';
+      jest.spyOn(userService, 'delete').mockResolvedValue(null);
+      await expect(usersController.delete(id)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

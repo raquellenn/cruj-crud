@@ -8,15 +8,15 @@ import { UserDto } from './dtos/user.dto';
 export class UserService {
   constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
 
-  async getAll() {
+  async getAll(): Promise<User[]> {
     return await this.userModel.find().exec();
   }
 
-  async getById(id: string) {
+  async getById(id: string): Promise<User> {
     return await this.userModel.findById(id).exec();
   }
 
-  async create(userDto: UserDto) {
+  async create(userDto: UserDto): Promise<User> {
     const user = new User(userDto.name, userDto.email);
     const existingUser = await this.userModel
       .findOne({ email: user.email })
@@ -28,7 +28,7 @@ export class UserService {
     return await createdUser.save();
   }
 
-  async update(id: string, user: UserDto) {
+  async update(id: string, user: UserDto): Promise<User> {
     await this.userModel.updateOne({ _id: id }, user).exec();
     return this.getById(id);
   }
