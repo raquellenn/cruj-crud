@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { User } from './user.entity';
+import { UsersModule } from './users.module';
 
 const usersList: User[] = [
   new User('alo', 'alo@hotmail'),
@@ -12,15 +13,21 @@ const user = usersList[0];
 
 describe('UserService', () => {
   let userService: UserService;
+  const mockModel = {
+    find: jest.fn(),
+  };
 
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
+      imports: [UsersModule],
       providers: [
         UserService,
         {
-          provide: getModelToken('User'),
+          provide: getModelToken('Users'),
           useValue: {
-            getAll: jest.fn().mockResolvedValue(usersList),
+            getAll: jest
+              .fn()
+              .mockImplementation(() => Promise.resolve(usersList)),
             getById: jest.fn().mockResolvedValue(user),
             create: jest.fn(),
             update: jest.fn(),
@@ -37,7 +44,7 @@ describe('UserService', () => {
     expect(userService).toBeDefined();
   });
 
-  describe('findAll', () => {
+  describe('getAll', () => {
     it('should return a array of users', async () => {
       const result = await userService.getAll();
       expect(result).toBe(usersList);
