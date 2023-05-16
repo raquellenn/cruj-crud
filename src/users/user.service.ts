@@ -1,42 +1,43 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Get, Injectable, Post } from '@nestjs/common';
 import { User } from './user.entity';
 import { UserDto } from './dtos/user.dto';
-import { UserDocument, Users } from './schemas/user.schema';
+import { PrismaService } from './prisma.service';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectModel(Users.name) private userModel: Model<UserDocument>,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
+  @Get()
   async getAll(): Promise<User[]> {
-    return await this.userModel.find().exec();
+    return await this.prisma.user.findMany();
   }
 
-  async getById(id: string): Promise<User> {
-    return await this.userModel.findById(id).exec();
+  @Get()
+  async getById(id: bigint): Promise<User> {
+    return await this.prisma.user.findUnique({ where: { id } });
   }
 
-  async create(userDto: UserDto): Promise<User> {
-    const user = new User(userDto.name, userDto.email);
-    const existingUser = await this.userModel
-      .findOne({ email: user.email })
-      .exec();
+  @Post()
+  async create(user: UserDto): Promise<User> {
+    const data = {
+      name: user.name,
+      email: user.email,
+    };
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: user.email },
+    });
     if (existingUser) {
       throw new Error('Email already exists');
     }
-    const createdUser = new this.userModel(user);
-    return await createdUser.save();
+    return this.prisma.user.create({ data: data });
   }
 
-  async update(id: string, user: UserDto): Promise<User> {
-    await this.userModel.updateOne({ _id: id }, user).exec();
-    return this.getById(id);
+  @Post()
+  async update(id: bigint, user: User): Promise<User> {
+    return await this.prisma.user.update({ where: { id }, data: user });
   }
 
-  async delete(id: string) {
-    return await this.userModel.deleteOne({ _id: id }).exec();
+  async delete(id: bigint) {
+    return await this.prisma.user.delete({ where: { id } });
   }
 }

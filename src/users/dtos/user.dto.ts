@@ -1,7 +1,7 @@
 import { IsString, IsEmail } from 'class-validator';
 
 export class UserDto {
-  id?: string;
+  id?: bigint;
   @IsString()
   name: string;
   @IsString()

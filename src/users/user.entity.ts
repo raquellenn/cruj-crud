@@ -1,9 +1,10 @@
 export class User {
   name: string;
   email: string;
-  id: string;
+  id?: bigint;
 
-  constructor(name, email) {
+  constructor(id, name: string, email: string) {
+    this.id = id;
     this.name = name;
     this.email = email;
   }

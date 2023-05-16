@@ -4,14 +4,14 @@ import { User } from './user.entity';
 import { UserService } from './user.service';
 import { UsersController } from './users.controller';
 
-const usersList: User[] = [
-  new User('alo', 'alo@hotmail'),
-  new User('b', 'b@gmail.com'),
-  new User('c', 'c@yahoo.com.br'),
-];
-const user = usersList[0];
-const createdUser = new User('d', 'd@hotmail.com');
-const updatedUser = new User('a', 'a@hotmail.com');
+// const usersList: User[] = [
+//   new User('alo', 'alo@hotmail'),
+//   new User('b', 'b@gmail.com'),
+//   new User('c', 'c@yahoo.com.br'),
+// ];
+// const user = usersList[0];
+// const createdUser = new User('d', 'd@hotmail.com');
+// const updatedUser = new User('a', 'a@hotmail.com');
 
 describe('UsersController', () => {
   let usersController: UsersController;

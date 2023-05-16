@@ -23,7 +23,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  async getById(@Param('id') id: string) {
+  async getById(@Param('id') id: bigint) {
     const foundById = await this.userService.getById(id);
     if (!foundById) {
       throw new NotFoundException('User Not Found');
@@ -42,7 +42,7 @@ export class UsersController {
 
   @Put(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id') id: bigint,
     @Body(new ValidationPipe()) user: UserDto,
   ) {
     const updatedUser = await this.userService.update(id, user);
@@ -53,7 +53,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: string) {
+  async delete(@Param('id') id: bigint) {
     const deletedUser = await this.userService.delete(id);
     if (!deletedUser) {
       throw new NotFoundException('User Not Found');
