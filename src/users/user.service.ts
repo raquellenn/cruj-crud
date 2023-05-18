@@ -1,4 +1,4 @@
-import { Get, Injectable, Post } from '@nestjs/common';
+import { Delete, Get, Injectable, Post } from '@nestjs/common';
 import { User } from './user.entity';
 import { UserDto } from './dtos/user.dto';
 import { PrismaService } from './prisma.service';
@@ -37,6 +37,7 @@ export class UserService {
     return await this.prisma.user.update({ where: { id }, data: user });
   }
 
+  @Delete()
   async delete(id: bigint) {
     return await this.prisma.user.delete({ where: { id } });
   }

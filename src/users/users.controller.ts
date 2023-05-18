@@ -54,10 +54,11 @@ export class UsersController {
 
   @Delete(':id')
   async delete(@Param('id') id: bigint) {
-    const deletedUser = await this.userService.delete(id);
-    if (!deletedUser) {
+    const user = await this.getById(id);
+
+    if (!user) {
       throw new NotFoundException('User Not Found');
     }
-    return deletedUser;
+    await this.userService.delete(id);
   }
 }
