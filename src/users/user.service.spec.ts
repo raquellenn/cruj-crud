@@ -48,56 +48,46 @@ describe('UserService', () => {
     expect(prismaService).toBeDefined();
   });
 
-  describe('getAll', () => {
-    it('should return an array of users', async () => {
-      jest
-        .spyOn<any, any>(prismaService.user, 'findMany')
-        .mockResolvedValue(usersList);
-      const result = await userService.getAll();
-      expect(result).toEqual(usersList);
-    });
+  it('getAll: should return an array of users', async () => {
+    jest
+      .spyOn<any, any>(prismaService.user, 'findMany')
+      .mockResolvedValue(usersList);
+    const result = await userService.getAll();
+    expect(result).toEqual(usersList);
   });
 
-  describe('getById', () => {
-    it('should return a specific user found by id', async () => {
-      const user = usersList[2];
-      const id = 3n;
-      jest
-        .spyOn<any, any>(prismaService.user, 'findUnique')
-        .mockResolvedValue(user);
+  it('findById: should return a specific user found by id', async () => {
+    const user = usersList[2];
+    const id = 3n;
+    jest
+      .spyOn<any, any>(prismaService.user, 'findUnique')
+      .mockResolvedValue(user);
 
-      const result = await userService.getById(id);
-      expect(result).toEqual(usersList[2]);
-    });
+    const result = await userService.getById(id);
+    expect(result).toEqual(usersList[2]);
   });
 
-  describe('create', () => {
-    it('should return a created user', async () => {
-      jest
-        .spyOn<any, any>(prismaService.user, 'create')
-        .mockResolvedValue(new User(4n, 'd', 'd@life.com'));
-      const result = await userService.create(new User(4n, 'd', 'd@life.com'));
-      expect(result).toEqual(new User(4n, 'd', 'd@life.com'));
-    });
+  it('create: should return a created user', async () => {
+    jest
+      .spyOn<any, any>(prismaService.user, 'create')
+      .mockResolvedValue(new User(4n, 'd', 'd@life.com'));
+    const result = await userService.create(new User(4n, 'd', 'd@life.com'));
+    expect(result).toEqual(new User(4n, 'd', 'd@life.com'));
   });
 
-  describe('update', () => {
-    it('should updated a specific user', async () => {
-      jest
-        .spyOn<any, any>(prismaService.user, 'update')
-        .mockResolvedValue(updatedUser);
-      const result = await userService.update(4n, updatedUser);
-      expect(result).toEqual(updatedUser);
-    });
+  it('update: should updated a specific user', async () => {
+    jest
+      .spyOn<any, any>(prismaService.user, 'update')
+      .mockResolvedValue(updatedUser);
+    const result = await userService.update(4n, updatedUser);
+    expect(result).toEqual(updatedUser);
   });
 
-  describe('delete', () => {
-    it('should delete a specific user', async () => {
-      jest
-        .spyOn<any, any>(prismaService.user, 'delete')
-        .mockResolvedValue(undefined);
-      const deletedUser = await userService.delete(7n);
-      expect(deletedUser).toBeUndefined();
-    });
+  it('delete: should delete a specific user', async () => {
+    jest
+      .spyOn<any, any>(prismaService.user, 'delete')
+      .mockResolvedValue(undefined);
+    const deletedUser = await userService.delete(7n);
+    expect(deletedUser).toBeUndefined();
   });
 });
