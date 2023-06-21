@@ -4,14 +4,14 @@ import { User } from './user.entity';
 import { UserService } from './user.service';
 import { UsersController } from './users.controller';
 
-// const usersList: User[] = [
-//   new User('alo', 'alo@hotmail'),
-//   new User('b', 'b@gmail.com'),
-//   new User('c', 'c@yahoo.com.br'),
-// ];
-// const user = usersList[0];
-// const createdUser = new User('d', 'd@hotmail.com');
-// const updatedUser = new User('a', 'a@hotmail.com');
+const usersList: User[] = [
+  new User(1n, 'alo', 'alo@hotmail'),
+  new User(2n, 'b', 'b@gmail.com'),
+  new User(3n, 'c', 'c@yahoo.com.br'),
+];
+const user = usersList[0];
+const createdUser = new User(4n, 'd', 'd@hotmail.com');
+const updatedUser = new User(4n, 'a', 'a@hotmail.com');
 
 describe('UsersController', () => {
   let usersController: UsersController;
@@ -55,7 +55,7 @@ describe('UsersController', () => {
   describe('getById', () => {
     it('should return a specific user', async () => {
       //arrange
-      const id = '17817191d912yh';
+      const id = 8n;
       //act
       const result = await usersController.getById(id);
       //assert
@@ -63,7 +63,7 @@ describe('UsersController', () => {
     });
 
     it('should throw a error if a user is not found', async () => {
-      const id = '10';
+      const id = 10n;
       jest.spyOn(userService, 'getById').mockResolvedValue(null);
 
       await expect(usersController.getById(id)).rejects.toThrow(
@@ -97,7 +97,7 @@ describe('UsersController', () => {
   describe('update', () => {
     it('should update an existing user', async () => {
       //arrange
-      const id = '1';
+      const id = 1n;
       const updateUserDto = { name: 'a', email: 'a@hotmail.com' };
 
       //act
@@ -109,7 +109,7 @@ describe('UsersController', () => {
 
     it('should throw an error if user is not found', async () => {
       //arrange
-      const id = '10';
+      const id = 10n;
       jest.spyOn(userService, 'update').mockResolvedValue(null);
       const updateUser = { name: 'bli', email: 'suarez@hotmail.com' };
 
@@ -122,15 +122,17 @@ describe('UsersController', () => {
   describe('delete', () => {
     it('should delete an existing user', async () => {
       //arrange
-      const id = '828782p8yuy8';
+      const id = 1n;
       //act
       const result = await usersController.delete(id);
       //assert
-      expect(result).toBe(user);
+      expect(result).toBeUndefined();
     });
     it('should throw a error if not found the user', async () => {
-      const id = '76826892';
-      jest.spyOn(userService, 'delete').mockResolvedValue(null);
+      const id = 6n;
+      jest
+        .spyOn(userService, 'delete')
+        .mockRejectedValue(new NotFoundException('User Not Found'));
       await expect(usersController.delete(id)).rejects.toThrow(
         NotFoundException,
       );

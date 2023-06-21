@@ -5,38 +5,25 @@ import { UsersModule } from './users.module';
 import { PrismaService } from './prisma.service';
 
 const usersList: User[] = [
-  new User(1n, 'rafael', 'rpp0810@gmail.com'),
-  new User(2n, 'Alice', 'alice@prisma.io'),
-  new User(6n, 'Amanda', 'amandacosta@hotmail.com'),
-  new User(7n, 'raquel fulana', 'raqueltcost@gmail.com'),
-  new User(10n, 'nathy', 'nathy@gmail.com'),
+  new User(1n, 'alo', 'alo@hotmail'),
+  new User(2n, 'b', 'b@gmail.com'),
+  new User(3n, 'c', 'c@yahoo.com.br'),
+  new User(7n, 'fulano', 'fulano@google.com'),
 ];
-const user = usersList[0];
-const updatedUser = new User(10n, 'ana', 'anacarol@toki.life');
+
+const updatedUser = new User(3n, 'a', 'a@hotmail.com');
 
 describe('UserService', () => {
   let userService: UserService;
   let prismaService: PrismaService;
 
-  const mockUserService = {
-    getAll: jest.fn().mockResolvedValue(usersList),
-    getById: jest.fn().mockResolvedValue(user),
-    create: jest.fn().mockImplementation((user) => Promise.resolve(user)),
-    update: jest
-      .fn()
-      .mockImplementation((id, user) => Promise.resolve(updatedUser)),
-    delete: jest.fn().mockResolvedValue(null),
-  };
-
-  const mockPrismaService = {
+  const mockPrisma = {
     user: {
-      findMany: jest.fn().mockResolvedValue(usersList),
-      findUnique: jest.fn().mockResolvedValue(user),
-      create: jest.fn().mockImplementation((user) => Promise.resolve(user)),
-      update: jest
-        .fn()
-        .mockImplementation((id, user) => Promise.resolve(updatedUser)),
-      delete: jest.fn().mockResolvedValue(null),
+      findMany: jest.fn(),
+      findUnique: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
     },
   };
 
@@ -45,14 +32,9 @@ describe('UserService', () => {
       imports: [UsersModule],
       providers: [
         UserService,
-        PrismaService,
-        {
-          provide: UserService,
-          useValue: mockUserService,
-        },
         {
           provide: PrismaService,
-          useValue: mockPrismaService,
+          useValue: mockPrisma,
         },
       ],
     }).compile();
@@ -68,6 +50,9 @@ describe('UserService', () => {
 
   describe('getAll', () => {
     it('should return an array of users', async () => {
+      jest
+        .spyOn<any, any>(prismaService.user, 'findMany')
+        .mockResolvedValue(usersList);
       const result = await userService.getAll();
       expect(result).toEqual(usersList);
     });
@@ -75,31 +60,44 @@ describe('UserService', () => {
 
   describe('getById', () => {
     it('should return a specific user found by id', async () => {
-      const id = 6n;
-      const user = await userService.getById(id);
-      expect(user).toEqual(usersList[2]);
+      const user = usersList[2];
+      const id = 3n;
+      jest
+        .spyOn<any, any>(prismaService.user, 'findUnique')
+        .mockResolvedValue(user);
+
+      const result = await userService.getById(id);
+      expect(result).toEqual(usersList[2]);
     });
   });
 
   describe('create', () => {
     it('should return a created user', async () => {
-      const user = new User(9n, 'nathy', 'nathyyy@gmail.com');
-      const usercreated = await userService.create(user);
-      expect(user).toEqual(usercreated);
+      jest
+        .spyOn<any, any>(prismaService.user, 'create')
+        .mockResolvedValue(new User(4n, 'd', 'd@life.com'));
+      const result = await userService.create(new User(4n, 'd', 'd@life.com'));
+      expect(result).toEqual(new User(4n, 'd', 'd@life.com'));
     });
   });
 
   describe('update', () => {
     it('should updated a specific user', async () => {
-      const result = await userService.update(10n, updatedUser);
+      jest
+        .spyOn<any, any>(prismaService.user, 'update')
+        .mockResolvedValue(updatedUser);
+      const result = await userService.update(4n, updatedUser);
       expect(result).toEqual(updatedUser);
     });
   });
 
   describe('delete', () => {
     it('should delete a specific user', async () => {
-      const deletedUser = await userService.delete(10n);
-      expect(deletedUser).toBeNull();
+      jest
+        .spyOn<any, any>(prismaService.user, 'delete')
+        .mockResolvedValue(undefined);
+      const deletedUser = await userService.delete(7n);
+      expect(deletedUser).toBeUndefined();
     });
   });
 });

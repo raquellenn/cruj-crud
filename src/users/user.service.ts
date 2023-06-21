@@ -1,4 +1,11 @@
-import { Delete, Get, Injectable, Post } from '@nestjs/common';
+import {
+  Delete,
+  Get,
+  Injectable,
+  NotFoundException,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { User } from './user.entity';
 import { UserDto } from './dtos/user.dto';
 import { PrismaService } from './prisma.service';
@@ -12,7 +19,7 @@ export class UserService {
     return await this.prisma.user.findMany();
   }
 
-  @Get()
+  @Get(':id')
   async getById(id: bigint): Promise<User> {
     return await this.prisma.user.findUnique({ where: { id } });
   }
@@ -32,13 +39,21 @@ export class UserService {
     return this.prisma.user.create({ data: data });
   }
 
-  @Post()
+  @Put(':id')
   async update(id: bigint, user: User): Promise<User> {
-    return await this.prisma.user.update({ where: { id }, data: user });
+    try {
+      return await this.prisma.user.update({ where: { id }, data: user });
+    } catch (error) {
+      throw new NotFoundException();
+    }
   }
 
-  @Delete()
+  @Delete(':id')
   async delete(id: bigint) {
-    return await this.prisma.user.delete({ where: { id } });
+    try {
+      return await this.prisma.user.delete({ where: { id } });
+    } catch (error) {
+      throw new NotFoundException();
+    }
   }
 }
