@@ -1,3 +1,4 @@
+import { User } from 'src/users/user.entity';
 import { Message } from '../message/message.entity';
 
 export class Historic {
@@ -18,18 +19,18 @@ export class Historic {
     );
   }
 
-  searchMessagesBySender(sender: string): Message[] {
+  searchMessagesBySender(sender: User): Message[] {
     // Filtra as mensagens pelo remetente
-    return this.messages.filter(message => message.sender === sender);
+    return this.messages.filter((message) => message.sender === sender);
   }
 
-  searchMessagesByReceiver(receiver: string): Message[] {
+  searchMessagesByReceiver(receiver: User): Message[] {
     // Filtra as mensagens pelo destinatário
-    return this.messages.filter(message => message.receiver === receiver);
+    return this.messages.filter((message) => message.receiver === receiver);
   }
 
   searchMessagesByContent(content: string): Message[] {
     // Filtra as mensagens pelo conteúdo
-    return this.messages.filter(message => message.content.includes(content));
+    return this.messages.filter((message) => message.content.includes(content));
   }
 }
