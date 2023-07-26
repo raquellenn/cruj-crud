@@ -1,7 +1,9 @@
 import {
   BadRequestException,
   Body,
+  Controller,
   Get,
+  Injectable,
   NotFoundException,
   Param,
   Post,
@@ -10,6 +12,7 @@ import {
 import { Message } from './message.entity';
 import { MessageService } from './message.service';
 
+@Controller()
 export class MessageController {
   constructor(private messageService: MessageService) {}
 

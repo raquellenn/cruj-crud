@@ -22,6 +22,6 @@ describe('Message', () => {
     it('should return false when sender is undefined', () => {
       message.sender = undefined;
       expect(message.isValid()).toBe(false);
-    })
+    });
   });
 });
